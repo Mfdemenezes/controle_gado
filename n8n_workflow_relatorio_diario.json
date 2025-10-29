@@ -1,0 +1,154 @@
+{
+  "name": "Controle de Gado - Relatório Diário",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "name": "Agendar às 8h da manhã",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  COUNT(*) as total_animais,\n  SUM(CASE WHEN sexo = 'M' THEN 1 ELSE 0 END) as machos,\n  SUM(CASE WHEN sexo = 'F' THEN 1 ELSE 0 END) as femeas,\n  AVG(peso_atual) as peso_medio,\n  SUM(peso_atual) as peso_total\nFROM animais \nWHERE status = 'ativo'",
+        "additionalFields": {}
+      },
+      "name": "Buscar Dados do Rebanho",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "sqlite": {
+          "id": "1",
+          "name": "Controle Gado DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT \n  a.brinco,\n  a.nome,\n  s.tipo,\n  s.produto,\n  s.proxima_aplicacao\nFROM sanidade s\nINNER JOIN animais a ON s.animal_id = a.id\nWHERE s.proxima_aplicacao BETWEEN date('now') AND date('now', '+7 days')\nAND a.status = 'ativo'\nORDER BY s.proxima_aplicacao",
+        "additionalFields": {}
+      },
+      "name": "Próximas Aplicações",
+      "type": "n8n-nodes-base.sqlite",
+      "typeVersion": 1,
+      "position": [450, 500],
+      "credentials": {
+        "sqlite": {
+          "id": "1",
+          "name": "Controle Gado DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "const rebanho = $node[\"Buscar Dados do Rebanho\"].json;\nconst aplicacoes = $node[\"Próximas Aplicações\"].json;\n\nlet mensagem = `📊 *RELATÓRIO DIÁRIO - CONTROLE DE GADO*\\n\\n`;\nmensagem += `📅 Data: ${new Date().toLocaleDateString('pt-BR')}\\n\\n`;\n\nmensagem += `🐮 *REBANHO ATIVO*\\n`;\nmensagem += `• Total de Animais: ${rebanho.total_animais}\\n`;\nmensagem += `• Machos: ${rebanho.machos}\\n`;\nmensagem += `• Fêmeas: ${rebanho.femeas}\\n`;\nmensagem += `• Peso Médio: ${rebanho.peso_medio ? rebanho.peso_medio.toFixed(2) : 'N/A'} kg\\n`;\nmensagem += `• Peso Total: ${rebanho.peso_total ? rebanho.peso_total.toFixed(2) : 'N/A'} kg\\n\\n`;\n\nif (aplicacoes && aplicacoes.length > 0) {\n  mensagem += `💉 *PRÓXIMAS APLICAÇÕES (7 dias)*\\n`;\n  aplicacoes.forEach(app => {\n    mensagem += `• ${app.proxima_aplicacao} - ${app.brinco} (${app.nome || 'S/N'})\\n`;\n    mensagem += `  ${app.tipo}: ${app.produto}\\n`;\n  });\n} else {\n  mensagem += `💉 *PRÓXIMAS APLICAÇÕES*\\n`;\n  mensagem += `• Nenhuma aplicação programada para os próximos 7 dias\\n`;\n}\n\nreturn {\n  json: {\n    mensagem: mensagem,\n    total_animais: rebanho.total_animais,\n    total_aplicacoes: aplicacoes ? aplicacoes.length : 0\n  }\n};"
+      },
+      "name": "Formatar Mensagem",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "content": "={{ $json.mensagem }}",
+        "additionalFields": {}
+      },
+      "name": "Enviar WhatsApp",
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1,
+      "position": [850, 300],
+      "credentials": {
+        "whatsAppApi": {
+          "id": "2",
+          "name": "WhatsApp API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "subject": "Relatório Diário - Controle de Gado",
+        "emailType": "text",
+        "message": "={{ $json.mensagem }}",
+        "options": {}
+      },
+      "name": "Enviar Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [850, 500],
+      "credentials": {
+        "smtp": {
+          "id": "3",
+          "name": "SMTP"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Agendar às 8h da manhã": {
+      "main": [
+        [
+          {
+            "node": "Buscar Dados do Rebanho",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Próximas Aplicações",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Dados do Rebanho": {
+      "main": [
+        [
+          {
+            "node": "Formatar Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Próximas Aplicações": {
+      "main": [
+        [
+          {
+            "node": "Formatar Mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatar Mensagem": {
+      "main": [
+        [
+          {
+            "node": "Enviar WhatsApp",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Enviar Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

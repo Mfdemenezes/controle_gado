@@ -1,0 +1,28 @@
+{
+  "name": "Controle de Gado",
+  "short_name": "Gado",
+  "description": "Sistema de gestão de rebanho bovino",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2c5530",
+  "theme_color": "#2c5530",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>🐮</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75'>🐮</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["productivity", "business"],
+  "screenshots": [],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

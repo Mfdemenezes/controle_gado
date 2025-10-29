@@ -1,0 +1,35 @@
+# Dependências do Sistema de Controle de Gado
+
+# Framework API
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+python-multipart==0.0.6
+
+# Banco de Dados
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.23
+
+# Autenticação e Segurança
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-dotenv==1.0.0
+bcrypt==4.1.1
+
+# Validação
+pydantic==2.5.0
+email-validator==2.1.0
+
+# Utilitários
+python-dateutil==2.8.2
+
+# Para relatórios e exports (opcional)
+openpyxl==3.1.2
+reportlab==4.0.7
+pandas==2.1.3
+
+# Para envio de emails
+aiosmtplib==3.0.1
+
+# HTTP Client para integração com N8N
+httpx==0.25.2
+requests==2.31.0
