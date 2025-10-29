@@ -4,6 +4,7 @@ FastAPI + PostgreSQL
 """
 
 from fastapi import FastAPI, HTTPException, Depends, status, Header
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel, Field
@@ -18,11 +19,74 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Configuração do FastAPI
+# Configuração do FastAPI com customização
 app = FastAPI(
-    title="API Controle de Gado",
-    description="API REST para gerenciamento de gado de corte",
-    version="1.0.0"
+    title="🐮 Controle de Gado API",
+    description="""## Sistema de Gestão de Rebanho Bovino - Gado de Corte
+
+API REST completa para controle de gado de corte com funcionalidades avançadas.
+
+### 📊 Recursos Principais
+
+* **Autenticação JWT** - Sistema seguro com tokens
+* **Gestão de Animais** - Cadastro completo do rebanho
+* **Pesagens** - Histórico com cálculo automático de GMD (Ganho Médio Diário)
+* **Sanidade** - Vacinas, vermífugos e tratamentos
+* **Movimentações** - Controle de pastos e lotes
+* **Relatórios** - Performance e análises do rebanho
+
+### 🔐 Como Usar
+
+1. Faça login em `/api/auth/login` para obter o token
+2. Clique em **Authorize** 🔒 (topo da página)
+3. Cole o token retornado
+4. Teste os endpoints!
+
+### 📝 Histórico de Versões
+
+**v1.0.0** (29/Out/2025)
+- ✅ Sistema de autenticação com JWT
+- ✅ CRUD completo de animais
+- ✅ Registro de pesagens com cálculo de GMD
+- ✅ Controle de sanidade (vacinas, vermífugos)
+- ✅ Movimentações entre pastos e lotes
+- ✅ Relatórios de performance e resumo
+- ✅ Interface PWA mobile-first
+- ✅ Deploy com HTTPS via Cloudflare
+
+**Roadmap v1.1.0**
+- 🔄 Integração com WhatsApp para alertas
+- 🔄 Backup automático diário
+- 🔄 Exportação de relatórios (PDF/Excel)
+- 🔄 Dashboard analytics avançado
+
+---
+**Desenvolvido com ❤️ usando FastAPI + PostgreSQL**
+    """,
+    version="1.0.0",
+    contact={
+        "name": "Suporte Técnico",
+        "email": "admin@fazenda.com"
+    },
+    license_info={
+        "name": "Uso Interno",
+    },
+    openapi_tags=[
+        {"name": "🔐 Autenticação", "description": "Login e logout no sistema"},
+        {"name": "🐮 Animais", "description": "Gestão completa do rebanho"},
+        {"name": "⚖️ Pesagens", "description": "Registro e consulta de pesos"},
+        {"name": "💉 Sanidade", "description": "Vacinas e tratamentos"},
+        {"name": "📦 Movimentações", "description": "Transferências entre pastos/lotes"},
+        {"name": "📍 Lotes e Pastos", "description": "Consulta de localizações"},
+        {"name": "📊 Relatórios", "description": "Análises e estatísticas"},
+        {"name": "⚙️ Sistema", "description": "Health check e informações"}
+    ],
+    swagger_ui_parameters={
+        "deepLinking": True,
+        "displayRequestDuration": True,
+        "filter": True,
+        "syntaxHighlight.theme": "monokai"
+    }
 )
 
 # CORS para permitir acesso do mobile
@@ -33,6 +97,65 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# CSS Customizado Verde Musgo
+def custom_swagger_ui_html():
+    return """
+    <link rel="stylesheet" type="text/css" href="/docs/swagger-ui.css">
+    <style>
+        /* Tema Verde Musgo para Gado de Corte */
+        .swagger-ui .topbar { 
+            background: linear-gradient(135deg, #556B2F 0%, #6B8E23 100%) !important;
+            border-bottom: 4px solid #4a5e24 !important;
+        }
+        .swagger-ui .info .title small {
+            background: #6B8E23 !important;
+            color: white !important;
+            padding: 2px 8px !important;
+            border-radius: 4px !important;
+            font-size: 14px !important;
+        }
+        .swagger-ui .info .title {
+            color: #556B2F !important;
+            font-size: 36px !important;
+            font-weight: bold !important;
+        }
+        .swagger-ui .btn.authorize {
+            background-color: #6B8E23 !important;
+            border-color: #556B2F !important;
+        }
+        .swagger-ui .btn.execute {
+            background-color: #556B2F !important;
+        }
+        .swagger-ui .btn.execute:hover {
+            background-color: #6B8E23 !important;
+        }
+        .swagger-ui .opblock.opblock-post {
+            background: rgba(107, 142, 35, 0.12) !important;
+            border-color: #6B8E23 !important;
+        }
+        .swagger-ui .opblock.opblock-post .opblock-summary-method {
+            background: #6B8E23 !important;
+        }
+        .swagger-ui .opblock.opblock-get {
+            background: rgba(85, 107, 47, 0.08) !important;
+            border-color: #556B2F !important;
+        }
+        .swagger-ui .opblock.opblock-get .opblock-summary-method {
+            background: #556B2F !important;
+        }
+        .swagger-ui .scheme-container {
+            background: #f5f8f0 !important;
+            border: 1px solid #d0d8c0 !important;
+        }
+        .swagger-ui a { color: #556B2F !important; }
+        .swagger-ui .opblock-tag { border-bottom: 2px solid #556B2F !important; }
+    </style>
+    """
+
+app.add_route("/swagger-custom-css", lambda: HTMLResponse(content=custom_swagger_ui_html()), include_in_schema=False)
+
+
 
 security = HTTPBearer()
 
@@ -59,7 +182,7 @@ class LoginResponse(BaseModel):
 class AnimalCreate(BaseModel):
     brinco: str
     nome: Optional[str] = None
-    sexo: str = Field(..., regex="^[MF]$")
+    sexo: str = Field(..., pattern="^[MF]$")
     raca: Optional[str] = None
     data_nascimento: Optional[str] = None
     peso_nascimento: Optional[float] = None
@@ -148,7 +271,7 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
 
 # ==================== ENDPOINTS DE AUTENTICAÇÃO ====================
 
-@app.post("/api/auth/login", response_model=LoginResponse)
+@app.post("/api/auth/login", tags=["🔐 Autenticação"], response_model=LoginResponse)
 def login(credentials: LoginRequest):
     """Endpoint de login"""
     conn = get_db_connection()
@@ -216,7 +339,7 @@ def login(credentials: LoginRequest):
         cur.close()
         conn.close()
 
-@app.post("/api/auth/logout")
+@app.post("/api/auth/logout", tags=["🔐 Autenticação"])
 def logout(user_data: dict = Depends(verify_token)):
     """Endpoint de logout"""
     conn = get_db_connection()
@@ -238,7 +361,7 @@ def logout(user_data: dict = Depends(verify_token)):
 
 # ==================== ENDPOINTS DE ANIMAIS ====================
 
-@app.get("/api/animais")
+@app.get("/api/animais", tags=["🐮 Animais"])
 def listar_animais(
     status: Optional[str] = "ativo",
     lote: Optional[str] = None,
@@ -282,7 +405,7 @@ def listar_animais(
         cur.close()
         conn.close()
 
-@app.get("/api/animais/{animal_id}")
+@app.get("/api/animais/{animal_id}", tags=["🐮 Animais"])
 def buscar_animal(animal_id: int, user_data: dict = Depends(verify_token)):
     """Busca animal por ID"""
     conn = get_db_connection()
@@ -301,7 +424,7 @@ def buscar_animal(animal_id: int, user_data: dict = Depends(verify_token)):
         cur.close()
         conn.close()
 
-@app.get("/api/animais/brinco/{brinco}")
+@app.get("/api/animais/brinco/{brinco}", tags=["🐮 Animais"])
 def buscar_animal_por_brinco(brinco: str, user_data: dict = Depends(verify_token)):
     """Busca animal por número do brinco"""
     conn = get_db_connection()
@@ -320,7 +443,7 @@ def buscar_animal_por_brinco(brinco: str, user_data: dict = Depends(verify_token
         cur.close()
         conn.close()
 
-@app.post("/api/animais", status_code=status.HTTP_201_CREATED)
+@app.post("/api/animais", tags=["🐮 Animais"], status_code=status.HTTP_201_CREATED)
 def cadastrar_animal(animal: AnimalCreate, user_data: dict = Depends(verify_token)):
     """Cadastra novo animal"""
     conn = get_db_connection()
@@ -363,7 +486,7 @@ def cadastrar_animal(animal: AnimalCreate, user_data: dict = Depends(verify_toke
         cur.close()
         conn.close()
 
-@app.put("/api/animais/{animal_id}")
+@app.put("/api/animais/{animal_id}", tags=["🐮 Animais"])
 def atualizar_animal(
     animal_id: int,
     animal: AnimalUpdate,
@@ -403,7 +526,7 @@ def atualizar_animal(
 
 # ==================== ENDPOINTS DE PESAGENS ====================
 
-@app.get("/api/pesagens/{animal_id}")
+@app.get("/api/pesagens/{animal_id}", tags=["⚖️ Pesagens"])
 def listar_pesagens(animal_id: int, user_data: dict = Depends(verify_token)):
     """Lista pesagens de um animal"""
     conn = get_db_connection()
@@ -427,7 +550,7 @@ def listar_pesagens(animal_id: int, user_data: dict = Depends(verify_token)):
         cur.close()
         conn.close()
 
-@app.post("/api/pesagens", status_code=status.HTTP_201_CREATED)
+@app.post("/api/pesagens", tags=["⚖️ Pesagens"], status_code=status.HTTP_201_CREATED)
 def registrar_pesagem(pesagem: PesagemCreate, user_data: dict = Depends(verify_token)):
     """Registra nova pesagem"""
     conn = get_db_connection()
@@ -465,7 +588,7 @@ def registrar_pesagem(pesagem: PesagemCreate, user_data: dict = Depends(verify_t
 
 # ==================== ENDPOINTS DE SANIDADE ====================
 
-@app.post("/api/sanidade", status_code=status.HTTP_201_CREATED)
+@app.post("/api/sanidade", tags=["💉 Sanidade"], status_code=status.HTTP_201_CREATED)
 def registrar_sanidade(sanidade: SanidadeCreate, user_data: dict = Depends(verify_token)):
     """Registra aplicação de sanidade"""
     conn = get_db_connection()
@@ -495,7 +618,7 @@ def registrar_sanidade(sanidade: SanidadeCreate, user_data: dict = Depends(verif
         cur.close()
         conn.close()
 
-@app.get("/api/sanidade/proximas")
+@app.get("/api/sanidade/proximas", tags=["💉 Sanidade"])
 def listar_proximas_aplicacoes(dias: int = 30, user_data: dict = Depends(verify_token)):
     """Lista próximas aplicações programadas"""
     conn = get_db_connection()
@@ -521,7 +644,7 @@ def listar_proximas_aplicacoes(dias: int = 30, user_data: dict = Depends(verify_
 
 # ==================== ENDPOINTS DE RELATÓRIOS ====================
 
-@app.get("/api/relatorios/resumo")
+@app.get("/api/relatorios/resumo", tags=["📊 Relatórios"])
 def relatorio_resumo(user_data: dict = Depends(verify_token)):
     """Relatório resumo do rebanho"""
     conn = get_db_connection()
@@ -537,7 +660,7 @@ def relatorio_resumo(user_data: dict = Depends(verify_token)):
         cur.close()
         conn.close()
 
-@app.get("/api/relatorios/performance")
+@app.get("/api/relatorios/performance", tags=["📊 Relatórios"])
 def relatorio_performance(limit: int = 50, user_data: dict = Depends(verify_token)):
     """Relatório de performance (GMD)"""
     conn = get_db_connection()
@@ -563,7 +686,7 @@ def relatorio_performance(limit: int = 50, user_data: dict = Depends(verify_toke
 
 # ==================== ENDPOINTS DE MOVIMENTAÇÕES ====================
 
-@app.post("/api/movimentacoes", status_code=status.HTTP_201_CREATED)
+@app.post("/api/movimentacoes", tags=["📦 Movimentações"], status_code=status.HTTP_201_CREATED)
 def registrar_movimentacao(
     movimentacao: MovimentacaoCreate,
     user_data: dict = Depends(verify_token)
@@ -613,7 +736,7 @@ def registrar_movimentacao(
 
 # ==================== ENDPOINTS AUXILIARES ====================
 
-@app.get("/api/lotes")
+@app.get("/api/lotes", tags=["📍 Lotes e Pastos"])
 def listar_lotes(user_data: dict = Depends(verify_token)):
     """Lista todos os lotes"""
     conn = get_db_connection()
@@ -640,7 +763,7 @@ def listar_lotes(user_data: dict = Depends(verify_token)):
         cur.close()
         conn.close()
 
-@app.get("/api/pastos")
+@app.get("/api/pastos", tags=["📍 Lotes e Pastos"])
 def listar_pastos(user_data: dict = Depends(verify_token)):
     """Lista todos os pastos"""
     conn = get_db_connection()
@@ -666,7 +789,7 @@ def listar_pastos(user_data: dict = Depends(verify_token)):
         cur.close()
         conn.close()
 
-@app.get("/")
+@app.get("/", tags=["⚙️ Sistema"])
 def root():
     """Endpoint raiz"""
     return {
@@ -676,7 +799,7 @@ def root():
         "docs": "/docs"
     }
 
-@app.get("/health")
+@app.get("/health", tags=["⚙️ Sistema"])
 def health_check():
     """Health check"""
     try:
