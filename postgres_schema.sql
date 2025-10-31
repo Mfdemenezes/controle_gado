@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS animais (
     data_nascimento DATE,
     peso_nascimento NUMERIC(10,2),
     peso_atual NUMERIC(10,2),
-    status VARCHAR(50) CHECK(status IN ('ativo', 'vendido', 'morto', 'transferido')) DEFAULT 'ativo',
+    status VARCHAR(50) CHECK(status IN ('ativo', 'vendido', 'morto', 'transferido', 'inativo')) DEFAULT 'ativo',
     lote VARCHAR(50),
     pasto VARCHAR(50),
     pai_id INTEGER REFERENCES animais(id),
@@ -119,7 +119,7 @@ CREATE TABLE IF NOT EXISTS pastos (
     area_hectares NUMERIC(10,2),
     tipo_capim VARCHAR(100),
     capacidade_animais INTEGER,
-    status VARCHAR(50) CHECK(status IN ('disponivel', 'ocupado', 'reforma', 'descanso')) DEFAULT 'disponivel',
+    status VARCHAR(50) CHECK(status IN ('disponivel', 'ocupado', 'reforma', 'descanso', 'encerrado')) DEFAULT 'disponivel',
     data_ultimo_manejo DATE,
     observacoes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
