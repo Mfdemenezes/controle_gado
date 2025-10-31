@@ -558,7 +558,19 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            background: url('img/tela-login-fazenda-1920x1080.png') center center / cover no-repeat;
+            position: relative;
+        }
+
+        .login-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 0;
         }
 
         .login-card {
@@ -568,6 +580,8 @@
             width: 100%;
             max-width: 400px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
         }
 
         .login-logo {
@@ -708,7 +722,7 @@
         <div id="homeView" class="screen active">
             <!-- Hero Image -->
             <div class="hero">
-                <img src="img/pagina_home_api_gado.jpg" alt="AgroMM">
+                <img src="img/cabecalho-fazenda-1920x400.png" alt="AgroMM">
                 <div class="hero-overlay">Sistema de Gestão Pecuária</div>
             </div>
 
@@ -721,12 +735,12 @@
                         <div class="stat-label">Total</div>
                     </div>
                     <div class="stat-card" onclick="showView('reproductionView')">
-                        <div class="stat-icon"><img src="img/vaca prenha.png" alt="Prenhas"></div>
+                        <div class="stat-icon"><img src="img/vaca-prenha.png" alt="Prenhas"></div>
                         <div class="stat-value" id="totalPrenhas">-</div>
                         <div class="stat-label">Prenhas</div>
                     </div>
                     <div class="stat-card" onclick="showView('animalsView')">
-                        <div class="stat-icon"><img src="img/vaca ou novilha.png" alt="Fêmeas"></div>
+                        <div class="stat-icon"><img src="img/vaca-ou-novilha.png" alt="Fêmeas"></div>
                         <div class="stat-value" id="totalFemeas">-</div>
                         <div class="stat-label">Fêmeas</div>
                     </div>
@@ -757,7 +771,7 @@
                             <div class="menu-label">Pastos</div>
                         </div>
                         <div class="menu-item" onclick="showView('tourosView')">
-                            <div class="menu-icon"><img src="img/touro com font.png" alt="Touros"></div>
+                            <div class="menu-icon"><img src="img/touro-com-font.png" alt="Touros"></div>
                             <div class="menu-label">Touros IA</div>
                         </div>
                     </div>
@@ -832,7 +846,7 @@
             <div class="container">
                 <div class="card">
                     <div class="card-title">
-                        <img src="img/touro com font.png" alt="" style="width: 32px;">
+                        <img src="img/touro-com-font.png" alt="" style="width: 32px;">
                         Touros para IA
                     </div>
                     <button class="btn btn-primary" onclick="openTouroModal()">+ Novo Touro</button>
@@ -1014,7 +1028,7 @@
                 <!-- Stats -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon"><img src="img/vaca prenha.png" alt="Prenhas"></div>
+                        <div class="stat-icon"><img src="img/vaca-prenha.png" alt="Prenhas"></div>
                         <div class="stat-value" id="statPrenhas">-</div>
                         <div class="stat-label">Prenhas</div>
                     </div>
@@ -2242,7 +2256,7 @@
                             ${data.map(t => `
                                 <li class="item">
                                     <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
-                                        <img src="img/touro com font.png" style="width: 32px; height: 32px;">
+                                        <img src="img/touro-com-font.png" style="width: 32px; height: 32px;">
                                         <div class="item-info">
                                             <div class="item-title">${t.brinco} - ${t.nome}</div>
                                             <div class="item-subtitle">
@@ -2576,12 +2590,12 @@
         // Helper: Get icon for category
         function getCategoryIcon(categoria) {
             const icons = {
-                'Bezerro': 'img/bezerro com font.png',
-                'Bezerra': 'img/bezerro com font.png',
-                'Garrote': 'img/garrote com font.png',
-                'Novilha': 'img/vaca ou novilha.png',
-                'Touro': 'img/touro com font.png',
-                'Vaca': 'img/vaca com font.png'
+                'Bezerro': 'img/bezerro-com-font.png',
+                'Bezerra': 'img/bezerro-com-font.png',
+                'Garrote': 'img/garrote-com-font.png',
+                'Novilha': 'img/vaca-ou-novilha.png',
+                'Touro': 'img/touro-com-font.png',
+                'Vaca': 'img/vaca-com-font.png'
             };
             return icons[categoria] || 'img/brinco.png';
         }
