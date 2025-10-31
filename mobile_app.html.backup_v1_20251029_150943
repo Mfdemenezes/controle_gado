@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#2c5530">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>Controle de Gado</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary-color: #2c5530;
+            --secondary-color: #5a8f3d;
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --border-color: #ddd;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 70px;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+        
+        .header-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Forms */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+            background: var(--secondary-color);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        /* Lists */
+        .animal-list {
+            list-style: none;
+        }
+        
+        .animal-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .animal-item:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .animal-brinco {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        .animal-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+        
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+        
+        .nav-icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 3px;
+        }
+        
+        .nav-label {
+            font-size: 0.7rem;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        .modal-close {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Alert */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        
+        .alert.active {
+            display: block;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-logo-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+        }
+        
+        .login-title {
+            font-size: 1.5rem;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        /* Hide screens */
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-screen">
+            <div class="login-card">
+                <div class="login-logo">
+                    <div class="login-logo-icon">🐮</div>
+                </div>
+                <h1 class="login-title">Controle de Gado</h1>
+                
+                <div id="loginAlert" class="alert"></div>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="loginEmail" required placeholder="seu@email.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Senha</label>
+                        <input type="password" class="form-input" id="loginPassword" required placeholder="••••••••">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main App -->
+    <div id="appScreen" class="screen">
+        
+        <!-- Header -->
+        <div class="header">
+            <h1>🐮 Controle de Gado</h1>
+            <div class="header-subtitle" id="userInfo"></div>
+        </div>
+        
+        <!-- Home Screen -->
+        <div id="homeView" class="screen active">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalAnimais">-</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalMachos">-</div>
+                        <div class="stat-label">Machos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalFemeas">-</div>
+                        <div class="stat-label">Fêmeas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="pesoMedio">-</div>
+                        <div class="stat-label">Peso Médio (kg)</div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-title">💉 Próximas Aplicações</div>
+                    <div id="proximasAplicacoes">
+                        <div class="loading active">
+                            <div class="spinner"></div>
+                            <p>Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Animals List Screen -->
+        <div id="animalsView" class="screen">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">🐮 Rebanho Ativo</div>
+                    
+                    <div class="form-group">
+                        <input type="text" class="form-input" id="searchAnimal" placeholder="🔍 Buscar por brinco ou nome...">
+                    </div>
+                    
+                    <div id="animalsList">
+                        <div class="loading active">
+                            <div class="spinner"></div>
+                            <p>Carregando animais...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Add Animal Screen -->
+        <div id="addAnimalView" class="screen">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">➕ Cadastrar Animal</div>
+                    
+                    <div id="addAnimalAlert" class="alert"></div>
+                    
+                    <form id="addAnimalForm">
+                        <div class="form-group">
+                            <label class="form-label">Número do Brinco *</label>
+                            <input type="text" class="form-input" name="brinco" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Nome</label>
+                            <input type="text" class="form-input" name="nome">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Sexo *</label>
+                            <select class="form-select" name="sexo" required>
+                                <option value="">Selecione...</option>
+                                <option value="M">Macho</option>
+                                <option value="F">Fêmea</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Raça</label>
+                            <input type="text" class="form-input" name="raca" placeholder="Ex: Nelore, Angus...">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Peso Atual (kg) *</label>
+                            <input type="number" class="form-input" name="peso_atual" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Data de Nascimento</label>
+                            <input type="date" class="form-input" name="data_nascimento">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Lote</label>
+                            <input type="text" class="form-input" name="lote">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Pasto</label>
+                            <input type="text" class="form-input" name="pasto">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Observações</label>
+                            <textarea class="form-textarea" name="observacoes"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success">Cadastrar Animal</button>
+                        <button type="button" class="btn btn-secondary" onclick="showView('homeView')">Cancelar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Weight Screen -->
+        <div id="weightView" class="screen">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">⚖️ Registrar Pesagem</div>
+                    
+                    <div id="weightAlert" class="alert"></div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Buscar Animal</label>
+                        <input type="text" class="form-input" id="searchWeightAnimal" placeholder="Digite o brinco...">
+                    </div>
+                    
+                    <div id="selectedAnimalInfo" style="display: none; margin: 15px 0; padding: 15px; background: #f0f0f0; border-radius: 8px;">
+                        <strong id="selectedAnimalBrinco"></strong><br>
+                        <span id="selectedAnimalNome"></span><br>
+                        Peso Atual: <span id="selectedAnimalPeso"></span> kg
+                    </div>
+                    
+                    <form id="weightForm" style="display: none;">
+                        <input type="hidden" id="weightAnimalId">
+                        
+                        <div class="form-group">
+                            <label class="form-label">Data da Pesagem</label>
+                            <input type="date" class="form-input" id="weightDate" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Peso (kg) *</label>
+                            <input type="number" class="form-input" id="weightValue" step="0.01" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Condição Corporal (1-5)</label>
+                            <select class="form-select" id="weightCondition">
+                                <option value="">Não informar</option>
+                                <option value="1">1 - Muito Magro</option>
+                                <option value="2">2 - Magro</option>
+                                <option value="3">3 - Regular</option>
+                                <option value="4">4 - Bom</option>
+                                <option value="5">5 - Gordo</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Observações</label>
+                            <textarea class="form-textarea" id="weightObs"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success">Registrar Pesagem</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetWeightForm()">Nova Pesagem</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a class="nav-item active" onclick="showView('homeView')">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Início</span>
+            </a>
+            <a class="nav-item" onclick="showView('animalsView')">
+                <span class="nav-icon">🐮</span>
+                <span class="nav-label">Animais</span>
+            </a>
+            <a class="nav-item" onclick="showView('addAnimalView')">
+                <span class="nav-icon">➕</span>
+                <span class="nav-label">Cadastrar</span>
+            </a>
+            <a class="nav-item" onclick="showView('weightView')">
+                <span class="nav-icon">⚖️</span>
+                <span class="nav-label">Pesagem</span>
+            </a>
+            <a class="nav-item" onclick="logout()">
+                <span class="nav-icon">🚪</span>
+                <span class="nav-label">Sair</span>
+            </a>
+        </div>
+        
+    </div>
+    
+    <script>
+        // Configuração da API
+        const API_URL = 'https://agromm.mbam.com.br/api'; // Alterar para URL de produção
+        
+        let authToken = localStorage.getItem('authToken');
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            if (authToken && currentUser) {
+                showAppScreen();
+            } else {
+                document.getElementById('loginScreen').classList.add('active');
+            }
+            
+            // Set today's date as default
+            document.getElementById('weightDate').valueAsDate = new Date();
+        });
+        
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const senha = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email, senha})
+                });
+                
+                if (!response.ok) throw new Error('Credenciais inválidas');
+                
+                const data = await response.json();
+                
+                authToken = data.token;
+                currentUser = data.usuario;
+                
+                localStorage.setItem('authToken', authToken);
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                showAppScreen();
+                
+            } catch (error) {
+                showAlert('loginAlert', error.message, 'error');
+            }
+        });
+        
+        // Logout
+        function logout() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                authToken = null;
+                currentUser = null;
+                
+                document.getElementById('appScreen').classList.remove('active');
+                document.getElementById('loginScreen').classList.add('active');
+            }
+        }
+        
+        // Show App Screen
+        async function showAppScreen() {
+            document.getElementById('loginScreen').classList.remove('active');
+            document.getElementById('appScreen').classList.add('active');
+            document.getElementById('userInfo').textContent = `Olá, ${currentUser.nome}`;
+            
+            await loadDashboard();
+        }
+        
+        // Load Dashboard Data
+        async function loadDashboard() {
+            try {
+                // Carregar resumo
+                const resumo = await apiRequest('/relatorios/resumo');
+                document.getElementById('totalAnimais').textContent = resumo.total_animais || 0;
+                document.getElementById('totalMachos').textContent = resumo.total_machos || 0;
+                document.getElementById('totalFemeas').textContent = resumo.total_femeas || 0;
+                document.getElementById('pesoMedio').textContent = resumo.peso_medio ? resumo.peso_medio.toFixed(1) : '-';
+                
+                // Carregar próximas aplicações
+                const aplicacoes = await apiRequest('/sanidade/proximas?dias=7');
+                const container = document.getElementById('proximasAplicacoes');
+                
+                if (aplicacoes.total === 0) {
+                    container.innerHTML = '<p style="color: #999; text-align: center;">Nenhuma aplicação programada</p>';
+                } else {
+                    container.innerHTML = aplicacoes.data.map(a => `
+                        <div style="padding: 10px; margin: 5px 0; background: #f9f9f9; border-radius: 6px; border-left: 3px solid var(--warning-color);">
+                            <strong>${a.brinco}</strong> - ${a.nome || 'S/N'}<br>
+                            <small>${new Date(a.proxima_aplicacao).toLocaleDateString('pt-BR')} - ${a.tipo}: ${a.produto}</small>
+                        </div>
+                    `).join('');
+                }
+                
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+            }
+        }
+        
+        // Load Animals List
+        async function loadAnimalsList() {
+            try {
+                const data = await apiRequest('/animais?limit=100');
+                const container = document.getElementById('animalsList');
+                
+                if (data.total === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999;">Nenhum animal cadastrado</p>';
+                } else {
+                    container.innerHTML = `
+                        <ul class="animal-list">
+                            ${data.data.map(animal => `
+                                <li class="animal-item" onclick="showAnimalDetails(${animal.id})">
+                                    <div class="animal-brinco">${animal.brinco}</div>
+                                    <div class="animal-info">
+                                        <span>${animal.nome || 'S/N'} - ${animal.sexo === 'M' ? '♂' : '♀'}</span>
+                                        <span>${animal.peso_atual} kg</span>
+                                    </div>
+                                    <div class="animal-info">
+                                        <span>${animal.raca || 'N/A'}</span>
+                                        <span>Lote: ${animal.lote || 'N/A'}</span>
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar animais:', error);
+            }
+        }
+        
+        // Search Animal
+        document.getElementById('searchAnimal')?.addEventListener('input', (e) => {
+            const search = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.animal-item');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(search) ? 'block' : 'none';
+            });
+        });
+        
+        // Add Animal Form
+        document.getElementById('addAnimalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            
+            // Convert empty strings to null
+            Object.keys(data).forEach(key => {
+                if (data[key] === '') data[key] = null;
+            });
+            
+            try {
+                await apiRequest('/animais', 'POST', data);
+                showAlert('addAnimalAlert', 'Animal cadastrado com sucesso!', 'success');
+                e.target.reset();
+                
+                setTimeout(() => {
+                    showView('animalsView');
+                }, 2000);
+                
+            } catch (error) {
+                showAlert('addAnimalAlert', error.message, 'error');
+            }
+        });
+        
+        // Search Animal for Weight
+        document.getElementById('searchWeightAnimal').addEventListener('input', debounce(async (e) => {
+            const brinco = e.target.value.trim();
+            
+            if (brinco.length < 2) {
+                document.getElementById('selectedAnimalInfo').style.display = 'none';
+                document.getElementById('weightForm').style.display = 'none';
+                return;
+            }
+            
+            try {
+                const animal = await apiRequest(`/animais/brinco/${brinco}`);
+                
+                document.getElementById('selectedAnimalBrinco').textContent = animal.brinco;
+                document.getElementById('selectedAnimalNome').textContent = animal.nome || 'Sem nome';
+                document.getElementById('selectedAnimalPeso').textContent = animal.peso_atual;
+                document.getElementById('weightAnimalId').value = animal.id;
+                
+                document.getElementById('selectedAnimalInfo').style.display = 'block';
+                document.getElementById('weightForm').style.display = 'block';
+                
+            } catch (error) {
+                document.getElementById('selectedAnimalInfo').style.display = 'none';
+                document.getElementById('weightForm').style.display = 'none';
+            }
+        }, 500));
+        
+        // Weight Form
+        document.getElementById('weightForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const data = {
+                animal_id: parseInt(document.getElementById('weightAnimalId').value),
+                peso: parseFloat(document.getElementById('weightValue').value),
+                data_pesagem: document.getElementById('weightDate').value,
+                condicao_corporal: document.getElementById('weightCondition').value ? parseInt(document.getElementById('weightCondition').value) : null,
+                observacoes: document.getElementById('weightObs').value || null
+            };
+            
+            try {
+                await apiRequest('/pesagens', 'POST', data);
+                showAlert('weightAlert', 'Pesagem registrada com sucesso!', 'success');
+                
+                setTimeout(() => {
+                    resetWeightForm();
+                }, 2000);
+                
+            } catch (error) {
+                showAlert('weightAlert', error.message, 'error');
+            }
+        });
+        
+        // Reset Weight Form
+        function resetWeightForm() {
+            document.getElementById('searchWeightAnimal').value = '';
+            document.getElementById('selectedAnimalInfo').style.display = 'none';
+            document.getElementById('weightForm').style.display = 'none';
+            document.getElementById('weightForm').reset();
+            document.getElementById('weightDate').valueAsDate = new Date();
+            document.getElementById('weightAlert').classList.remove('active');
+        }
+        
+        // Show View
+        function showView(viewId) {
+            // Hide all views
+            document.querySelectorAll('#appScreen > .screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show selected view
+            document.getElementById(viewId).classList.add('active');
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item')?.classList.add('active');
+            
+            // Load data based on view
+            if (viewId === 'homeView') {
+                loadDashboard();
+            } else if (viewId === 'animalsView') {
+                loadAnimalsList();
+            }
+        }
+        
+        // API Request Helper
+        async function apiRequest(endpoint, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                }
+            };
+            
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+            
+            const response = await fetch(`${API_URL}${endpoint}`, options);
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.detail || 'Erro na requisição');
+            }
+            
+            return response.json();
+        }
+        
+        // Show Alert
+        function showAlert(elementId, message, type) {
+            const alert = document.getElementById(elementId);
+            alert.textContent = message;
+            alert.className = `alert alert-${type} active`;
+            
+            setTimeout(() => {
+                alert.classList.remove('active');
+            }, 5000);
+        }
+        
+        // Debounce Helper
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            });
+        }
+    </script>
+</body>
+</html>

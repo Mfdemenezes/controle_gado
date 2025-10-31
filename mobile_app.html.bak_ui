@@ -1,0 +1,2269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#556B2F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>AgroMM - Controle de Gado</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #556B2F;
+            --secondary-color: #6B8E23;
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --border-color: #ddd;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --danger-color: #f44336;
+            --info-color: #2196F3;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 70px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .header-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        /* Hero Section */
+        .hero {
+            width: 100%;
+            max-height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .hero img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(85,107,47,0.9), transparent);
+            color: white;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* Container */
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .stat-card:active {
+            transform: scale(0.98);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 10px;
+        }
+
+        .stat-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Menu Grid */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .menu-item:active {
+            transform: scale(0.98);
+            border-color: var(--primary-color);
+        }
+
+        .menu-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 10px;
+        }
+
+        .menu-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .menu-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .form-textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            background: var(--secondary-color);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            width: auto;
+            margin: 0;
+        }
+
+        /* Lists */
+        .item-list {
+            list-style: none;
+        }
+
+        .item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .item-subtitle {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline:before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 20px;
+        }
+
+        .timeline-icon {
+            position: absolute;
+            left: -24px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timeline-icon img {
+            width: 16px;
+            height: 16px;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .timeline-text {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.3s;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .nav-label {
+            font-size: 0.7rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .modal-close {
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+            background: none;
+            border: none;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Alert */
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .alert.active {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-logo-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+        }
+
+        .login-title {
+            font-size: 1.5rem;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        /* Hide screens */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.3s;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div class="login-screen">
+            <div class="login-card">
+                <div class="login-logo">
+                    <div class="login-logo-icon">🐮</div>
+                </div>
+                <h1 class="login-title">AgroMM</h1>
+
+                <div id="loginAlert" class="alert"></div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="loginEmail" required placeholder="seu@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Senha</label>
+                        <input type="password" class="form-input" id="loginPassword" required placeholder="••••••••">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appScreen" class="screen">
+
+        <!-- Header -->
+        <div class="header">
+            <h1>🐮 AgroMM</h1>
+            <div class="header-subtitle" id="userInfo"></div>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="homeView" class="screen active">
+            <!-- Hero Image -->
+            <div class="hero">
+                <img src="img/pagina_home_api_gado.jpg" alt="AgroMM">
+                <div class="hero-overlay">Sistema de Gestão Pecuária</div>
+            </div>
+
+            <div class="container">
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card" onclick="showView('animalsView')">
+                        <div class="stat-icon"><img src="img/brinco.png" alt="Total"></div>
+                        <div class="stat-value" id="totalAnimais">-</div>
+                        <div class="stat-label">Total</div>
+                    </div>
+                    <div class="stat-card" onclick="showView('reproductionView')">
+                        <div class="stat-icon"><img src="img/vaca prenha.png" alt="Prenhas"></div>
+                        <div class="stat-value" id="totalPrenhas">-</div>
+                        <div class="stat-label">Prenhas</div>
+                    </div>
+                    <div class="stat-card" onclick="showView('animalsView')">
+                        <div class="stat-icon"><img src="img/vaca ou novilha.png" alt="Fêmeas"></div>
+                        <div class="stat-value" id="totalFemeas">-</div>
+                        <div class="stat-label">Fêmeas</div>
+                    </div>
+                    <div class="stat-card" onclick="showView('animalsView')">
+                        <div class="stat-icon"><img src="img/touro.png" alt="Machos"></div>
+                        <div class="stat-value" id="totalMachos">-</div>
+                        <div class="stat-label">Machos</div>
+                    </div>
+                </div>
+
+                <!-- Cadastros Base -->
+                <div class="card">
+                    <div class="card-title">
+                        <img src="img/cadastro.png" alt="">
+                        Cadastros Base
+                    </div>
+                    <div class="menu-grid">
+                        <div class="menu-item" onclick="showView('racasView')">
+                            <div class="menu-icon"><img src="img/brinco.png" alt="Raças"></div>
+                            <div class="menu-label">Raças</div>
+                        </div>
+                        <div class="menu-item" onclick="showView('lotesView')">
+                            <div class="menu-icon"><img src="img/apstagem.png" alt="Lotes"></div>
+                            <div class="menu-label">Lotes</div>
+                        </div>
+                        <div class="menu-item" onclick="showView('pastosView')">
+                            <div class="menu-icon"><img src="img/apstagem.png" alt="Pastos"></div>
+                            <div class="menu-label">Pastos</div>
+                        </div>
+                        <div class="menu-item" onclick="showView('tourosView')">
+                            <div class="menu-icon"><img src="img/touro com font.png" alt="Touros"></div>
+                            <div class="menu-label">Touros IA</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Próximos Eventos -->
+                <div class="card">
+                    <div class="card-title">
+                        <img src="img/icone_sanidade.png" alt="">
+                        Próximos Eventos
+                    </div>
+                    <div id="proximosEventos">
+                        <div class="loading active">
+                            <div class="spinner"></div>
+                            <p>Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Raças View -->
+        <div id="racasView" class="screen">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">🧬 Raças</div>
+                    <button class="btn btn-primary" onclick="openRacaModal()">+ Nova Raça</button>
+                    <div id="racasList" style="margin-top: 15px;">
+                        <div class="loading active">
+                            <div class="spinner"></div>
+                            <p>Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lotes View -->
+        <div id="lotesView" class="screen">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">📦 Lotes</div>
+                    <button class="btn btn-primary" onclick="openLoteModal()">+ Novo Lote</button>
+                    <div id="lotesList" style="margin-top: 15px;">
+                        <div class="loading active">
+                            <div class="spinner"></div>
+                            <p>Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pastos View -->
+        <div id="pastosView" class="screen">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">🌾 Pastos</div>
+                    <button class="btn btn-primary" onclick="openPastoModal()">+ Novo Pasto</button>
+                    <div id="pastosList" style="margin-top: 15px;">
+                        <div class="loading active">
+                            <div class="spinner"></div>
+                            <p>Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Touros View -->
+        <div id="tourosView" class="screen">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">
+                        <img src="img/touro com font.png" alt="" style="width: 32px;">
+                        Touros para IA
+                    </div>
+                    <button class="btn btn-primary" onclick="openTouroModal()">+ Novo Touro</button>
+                    <div id="tourosList" style="margin-top: 15px;">
+                        <div class="loading active">
+                            <div class="spinner"></div>
+                            <p>Carregando...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Animals List Screen -->
+        <div id="animalsView" class="screen">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">
+                        <img src="img/brinco.png" alt="">
+                        Rebanho Ativo
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="form-input" id="searchAnimal" placeholder="🔍 Buscar por brinco ou nome...">
+                    </div>
+
+                    <div id="animalsList">
+                        <div class="loading active">
+                            <div class="spinner"></div>
+                            <p>Carregando animais...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Animal Screen -->
+        <div id="addAnimalView" class="screen">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">
+                        <img src="img/cadastro.png" alt="">
+                        Cadastrar Animal
+                    </div>
+
+                    <div id="addAnimalAlert" class="alert"></div>
+
+                    <form id="addAnimalForm">
+                        <div class="form-group">
+                            <label class="form-label">Número do Brinco *</label>
+                            <input type="text" class="form-input" name="brinco" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Nome</label>
+                            <input type="text" class="form-input" name="nome">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Sexo *</label>
+                                <select class="form-select" name="sexo" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="M">Macho</option>
+                                    <option value="F">Fêmea</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Data Nascimento</label>
+                                <input type="date" class="form-input" name="data_nascimento">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Raça</label>
+                                <select class="form-select" name="raca_id" id="animalRacaSelect">
+                                    <option value="">Selecione...</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Peso Atual (kg) *</label>
+                                <input type="number" class="form-input" name="peso_atual" step="0.01" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Lote</label>
+                                <select class="form-select" name="lote_id" id="animalLoteSelect">
+                                    <option value="">Selecione...</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Pasto</label>
+                                <select class="form-select" name="pasto_id" id="animalPastoSelect">
+                                    <option value="">Selecione...</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Observações</label>
+                            <textarea class="form-textarea" name="observacoes"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Cadastrar Animal</button>
+                        <button type="button" class="btn btn-secondary" onclick="showView('homeView')">Cancelar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weight Screen -->
+        <div id="weightView" class="screen">
+            <div class="container">
+                <div class="card">
+                    <div class="card-title">
+                        <img src="img/apstagem.png" alt="">
+                        Registrar Pesagem
+                    </div>
+
+                    <div id="weightAlert" class="alert"></div>
+
+                    <div class="form-group">
+                        <label class="form-label">Buscar Animal</label>
+                        <input type="text" class="form-input" id="searchWeightAnimal" placeholder="Digite o brinco...">
+                    </div>
+
+                    <div id="selectedAnimalInfo" style="display: none; margin: 15px 0; padding: 15px; background: #f0f0f0; border-radius: 8px;">
+                        <strong id="selectedAnimalBrinco"></strong><br>
+                        <span id="selectedAnimalNome"></span><br>
+                        Peso Atual: <span id="selectedAnimalPeso"></span> kg
+                    </div>
+
+                    <form id="weightForm" style="display: none;">
+                        <input type="hidden" id="weightAnimalId">
+
+                        <div class="form-group">
+                            <label class="form-label">Data da Pesagem</label>
+                            <input type="date" class="form-input" id="weightDate" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Peso (kg) *</label>
+                            <input type="number" class="form-input" id="weightValue" step="0.01" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Condição Corporal (1-5)</label>
+                            <select class="form-select" id="weightCondition">
+                                <option value="">Não informar</option>
+                                <option value="1">1 - Muito Magro</option>
+                                <option value="2">2 - Magro</option>
+                                <option value="3">3 - Regular</option>
+                                <option value="4">4 - Bom</option>
+                                <option value="5">5 - Gordo</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Observações</label>
+                            <textarea class="form-textarea" id="weightObs"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Registrar Pesagem</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetWeightForm()">Nova Pesagem</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reproduction Dashboard -->
+        <div id="reproductionView" class="screen">
+            <div class="container">
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><img src="img/vaca prenha.png" alt="Prenhas"></div>
+                        <div class="stat-value" id="statPrenhas">-</div>
+                        <div class="stat-label">Prenhas</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><img src="img/nascimento.png" alt="Partos"></div>
+                        <div class="stat-value" id="statPartos">-</div>
+                        <div class="stat-label">Partos/Ano</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><img src="img/cio.png" alt="Diagnóstico"></div>
+                        <div class="stat-value" id="statDiagnostico">-</div>
+                        <div class="stat-label">A Diagnosticar</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><img src="img/aborto.png" alt="Abortos"></div>
+                        <div class="stat-value" id="statAbortos">-</div>
+                        <div class="stat-label">Abortos/Ano</div>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="card">
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchTab('eventos')">Eventos</div>
+                        <div class="tab" onclick="switchTab('timeline')">Timeline</div>
+                        <div class="tab" onclick="switchTab('registrar')">Registrar</div>
+                    </div>
+
+                    <!-- Eventos Tab -->
+                    <div id="eventosTab" class="tab-content active">
+                        <div id="proximosEventosReprod">
+                            <div class="loading active">
+                                <div class="spinner"></div>
+                                <p>Carregando eventos...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline Tab -->
+                    <div id="timelineTab" class="tab-content">
+                        <div class="form-group">
+                            <input type="text" class="form-input" id="searchTimelineAnimal" placeholder="🔍 Buscar animal...">
+                        </div>
+                        <div id="timelineEvents">
+                            <p style="color: #999; text-align: center;">Digite o brinco do animal</p>
+                        </div>
+                    </div>
+
+                    <!-- Registrar Tab -->
+                    <div id="registrarTab" class="tab-content">
+                        <div id="reproductionAlert" class="alert"></div>
+                        <form id="reproductionForm">
+                            <div class="form-group">
+                                <label class="form-label">Animal (Brinco) *</label>
+                                <input type="text" class="form-input" id="reprodAnimalBrinco" required placeholder="Digite o brinco...">
+                            </div>
+
+                            <div id="reprodAnimalInfo" style="display: none; margin: 15px 0; padding: 15px; background: #f0f0f0; border-radius: 8px;">
+                                <strong id="reprodAnimalName"></strong><br>
+                                <span id="reprodAnimalDetails"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Tipo de Evento *</label>
+                                <select class="form-select" id="reprodTipoEvento" required>
+                                    <option value="">Selecione...</option>
+                                    <option value="inseminacao">Inseminação Artificial</option>
+                                    <option value="diagnostico_positivo">Diagnóstico Positivo (Prenha)</option>
+                                    <option value="diagnostico_negativo">Diagnóstico Negativo</option>
+                                    <option value="parto">Parto</option>
+                                    <option value="aborto">Aborto</option>
+                                    <option value="cio">Cio</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Data do Evento *</label>
+                                <input type="date" class="form-input" id="reprodDataEvento" required>
+                            </div>
+
+                            <div class="form-group" id="touroGroup" style="display: none;">
+                                <label class="form-label">Touro IA</label>
+                                <select class="form-select" id="reprodTouro">
+                                    <option value="">Selecione...</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="natimortoGroup" style="display: none;">
+                                <label class="form-label">
+                                    <input type="checkbox" id="reprodNatimorto" style="width: auto; margin-right: 5px;">
+                                    Natimorto (não criar bezerro)
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-success">Registrar Evento</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <a class="nav-item active" onclick="showView('homeView')">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Início</span>
+            </a>
+            <a class="nav-item" onclick="showView('animalsView')">
+                <span class="nav-icon">🐮</span>
+                <span class="nav-label">Animais</span>
+            </a>
+            <a class="nav-item" onclick="showView('addAnimalView')">
+                <span class="nav-icon">➕</span>
+                <span class="nav-label">Cadastrar</span>
+            </a>
+            <a class="nav-item" onclick="showView('reproductionView')">
+                <span class="nav-icon">👶</span>
+                <span class="nav-label">Reprodução</span>
+            </a>
+            <a class="nav-item" onclick="logout()">
+                <span class="nav-icon">🚪</span>
+                <span class="nav-label">Sair</span>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Raça Modal -->
+    <div id="racaModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="racaModalTitle">Nova Raça</h3>
+                <button class="modal-close" onclick="closeRacaModal()">✕</button>
+            </div>
+            <div id="racaModalAlert" class="alert"></div>
+            <form id="racaForm">
+                <input type="hidden" id="racaId">
+                <div class="form-group">
+                    <label class="form-label">Nome *</label>
+                    <input type="text" class="form-input" id="racaNome" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Origem</label>
+                    <input type="text" class="form-input" id="racaOrigem" placeholder="Ex: Zebuína, Europeia...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <textarea class="form-textarea" id="racaDescricao"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Salvar</button>
+                <button type="button" class="btn btn-secondary" onclick="closeRacaModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lote Modal -->
+    <div id="loteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="loteModalTitle">Novo Lote</h3>
+                <button class="modal-close" onclick="closeLoteModal()">✕</button>
+            </div>
+            <div id="loteModalAlert" class="alert"></div>
+            <form id="loteForm">
+                <input type="hidden" id="loteId">
+                <div class="form-group">
+                    <label class="form-label">Nome *</label>
+                    <input type="text" class="form-input" id="loteNome" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <textarea class="form-textarea" id="loteDescricao"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Salvar</button>
+                <button type="button" class="btn btn-secondary" onclick="closeLoteModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Pasto Modal -->
+    <div id="pastoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="pastoModalTitle">Novo Pasto</h3>
+                <button class="modal-close" onclick="closePastoModal()">✕</button>
+            </div>
+            <div id="pastoModalAlert" class="alert"></div>
+            <form id="pastoForm">
+                <input type="hidden" id="pastoId">
+                <div class="form-group">
+                    <label class="form-label">Nome *</label>
+                    <input type="text" class="form-input" id="pastoNome" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Área (hectares)</label>
+                    <input type="number" class="form-input" id="pastoArea" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tipo de Pasto</label>
+                    <input type="text" class="form-input" id="pastoTipo" placeholder="Ex: Brachiaria, Tifton...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <textarea class="form-textarea" id="pastoDescricao"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Salvar</button>
+                <button type="button" class="btn btn-secondary" onclick="closePastoModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Touro Modal -->
+    <div id="touroModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="touroModalTitle">Novo Touro IA</h3>
+                <button class="modal-close" onclick="closeTouroModal()">✕</button>
+            </div>
+            <div id="touroModalAlert" class="alert"></div>
+            <form id="touroForm">
+                <input type="hidden" id="touroId">
+                <div class="form-group">
+                    <label class="form-label">Brinco/Código *</label>
+                    <input type="text" class="form-input" id="touroBrinco" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nome *</label>
+                    <input type="text" class="form-input" id="touroNome" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Raça</label>
+                    <select class="form-select" id="touroRaca">
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Registro</label>
+                    <input type="text" class="form-input" id="touroRegistro" placeholder="Nº do registro...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Linhagem</label>
+                    <textarea class="form-textarea" id="touroLinhagem"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Salvar</button>
+                <button type="button" class="btn btn-secondary" onclick="closeTouroModal()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Configuração da API - detecta se está em produção
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:8000/api'
+            : '/api';
+
+        let authToken = localStorage.getItem('authToken');
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            if (authToken && currentUser) {
+                showAppScreen();
+            } else {
+                document.getElementById('loginScreen').classList.add('active');
+            }
+
+            // Set today's date as default
+            document.getElementById('weightDate').valueAsDate = new Date();
+            document.getElementById('reprodDataEvento').valueAsDate = new Date();
+        });
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value;
+            const senha = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email, senha})
+                });
+
+                if (!response.ok) throw new Error('Credenciais inválidas');
+
+                const data = await response.json();
+
+                authToken = data.token;
+                currentUser = data.usuario;
+
+                localStorage.setItem('authToken', authToken);
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+
+                showAppScreen();
+
+            } catch (error) {
+                showAlert('loginAlert', error.message, 'error');
+            }
+        });
+
+        // Logout
+        function logout() {
+            if (confirm('Deseja realmente sair?')) {
+                localStorage.removeItem('authToken');
+                localStorage.removeItem('currentUser');
+                authToken = null;
+                currentUser = null;
+
+                document.getElementById('appScreen').classList.remove('active');
+                document.getElementById('loginScreen').classList.add('active');
+            }
+        }
+
+        // Show App Screen
+        async function showAppScreen() {
+            document.getElementById('loginScreen').classList.remove('active');
+            document.getElementById('appScreen').classList.add('active');
+            document.getElementById('userInfo').textContent = `Olá, ${currentUser.nome}`;
+
+            await loadDashboard();
+            await loadAnimalFormSelects();
+        }
+
+        // Load Dashboard Data
+        async function loadDashboard() {
+            try {
+                // Carregar resumo
+                const resumo = await apiRequest('/relatorios/resumo');
+                document.getElementById('totalAnimais').textContent = resumo.total_animais || 0;
+                document.getElementById('totalMachos').textContent = resumo.total_machos || 0;
+                document.getElementById('totalFemeas').textContent = resumo.total_femeas || 0;
+
+                // Carregar stats de reprodução
+                const statsReprod = await apiRequest('/relatorios/reproducao');
+                document.getElementById('totalPrenhas').textContent = statsReprod.total_prenhas || 0;
+
+                // Carregar próximos eventos reprodutivos
+                const eventos = await apiRequest('/relatorios/proximos-eventos?dias=30');
+                const container = document.getElementById('proximosEventos');
+
+                if (!eventos || eventos.length === 0) {
+                    container.innerHTML = '<p style="color: #999; text-align: center;">Nenhum evento programado</p>';
+                } else {
+                    container.innerHTML = eventos.slice(0, 5).map(e => {
+                        const icon = getEventIcon(e.tipo_evento);
+                        const badge = getEventBadge(e.tipo_evento);
+                        return `
+                            <div style="padding: 10px; margin: 5px 0; background: #f9f9f9; border-radius: 6px; border-left: 3px solid var(--info-color);">
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <img src="${icon}" style="width: 24px; height: 24px;">
+                                    <div style="flex: 1;">
+                                        <strong>${e.brinco}</strong> - ${e.nome || 'S/N'}<br>
+                                        <small>${new Date(e.data_prevista).toLocaleDateString('pt-BR')} - ${badge}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+            } catch (error) {
+                console.error('Erro ao carregar dashboard:', error);
+            }
+        }
+
+        // Load Animals List
+        async function loadAnimalsList() {
+            try {
+                const data = await apiRequest('/animais?limit=100');
+                const container = document.getElementById('animalsList');
+
+                if (data.total === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999;">Nenhum animal cadastrado</p>';
+                } else {
+                    container.innerHTML = `
+                        <ul class="item-list">
+                            ${data.data.map(animal => {
+                                const categoryIcon = getCategoryIcon(animal.categoria_nome);
+                                return `
+                                    <li class="item">
+                                        <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                            <img src="${categoryIcon}" style="width: 32px; height: 32px;">
+                                            <div class="item-info">
+                                                <div class="item-title">${animal.brinco}</div>
+                                                <div class="item-subtitle">
+                                                    ${animal.nome || 'S/N'} - ${animal.sexo === 'M' ? '♂' : '♀'} - ${animal.peso_atual} kg
+                                                    <br>
+                                                    ${animal.categoria_nome || 'N/A'} - ${animal.raca_nome || 'S/R'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </li>
+                                `;
+                            }).join('')}
+                        </ul>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar animais:', error);
+            }
+        }
+
+        // Search Animal
+        document.getElementById('searchAnimal')?.addEventListener('input', (e) => {
+            const search = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.item');
+
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(search) ? 'flex' : 'none';
+            });
+        });
+
+        // Load selects for animal form
+        async function loadAnimalFormSelects() {
+            try {
+                // Load raças
+                const racas = await apiRequest('/racas');
+                const racaSelect = document.getElementById('animalRacaSelect');
+                racaSelect.innerHTML = '<option value="">Selecione...</option>' +
+                    racas.map(r => `<option value="${r.id}">${r.nome}</option>`).join('');
+
+                // Load lotes
+                const lotes = await apiRequest('/lotes');
+                const loteSelect = document.getElementById('animalLoteSelect');
+                loteSelect.innerHTML = '<option value="">Selecione...</option>' +
+                    lotes.map(l => `<option value="${l.id}">${l.nome}</option>`).join('');
+
+                // Load pastos
+                const pastos = await apiRequest('/pastos');
+                const pastoSelect = document.getElementById('animalPastoSelect');
+                pastoSelect.innerHTML = '<option value="">Selecione...</option>' +
+                    pastos.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
+
+            } catch (error) {
+                console.error('Erro ao carregar selects:', error);
+            }
+        }
+
+        // Add Animal Form
+        document.getElementById('addAnimalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = {};
+
+            // Process form data
+            for (let [key, value] of formData.entries()) {
+                if (value === '' || value === null) {
+                    data[key] = null;
+                } else if (key.endsWith('_id')) {
+                    data[key] = parseInt(value);
+                } else if (key === 'peso_atual') {
+                    data[key] = parseFloat(value);
+                } else {
+                    data[key] = value;
+                }
+            }
+
+            try {
+                await apiRequest('/animais', 'POST', data);
+                showAlert('addAnimalAlert', 'Animal cadastrado com sucesso!', 'success');
+                e.target.reset();
+
+                setTimeout(() => {
+                    showView('animalsView');
+                }, 2000);
+
+            } catch (error) {
+                showAlert('addAnimalAlert', error.message, 'error');
+            }
+        });
+
+        // Search Animal for Weight
+        document.getElementById('searchWeightAnimal').addEventListener('input', debounce(async (e) => {
+            const brinco = e.target.value.trim();
+
+            if (brinco.length < 2) {
+                document.getElementById('selectedAnimalInfo').style.display = 'none';
+                document.getElementById('weightForm').style.display = 'none';
+                return;
+            }
+
+            try {
+                const animal = await apiRequest(`/animais/brinco/${brinco}`);
+
+                document.getElementById('selectedAnimalBrinco').textContent = animal.brinco;
+                document.getElementById('selectedAnimalNome').textContent = animal.nome || 'Sem nome';
+                document.getElementById('selectedAnimalPeso').textContent = animal.peso_atual;
+                document.getElementById('weightAnimalId').value = animal.id;
+
+                document.getElementById('selectedAnimalInfo').style.display = 'block';
+                document.getElementById('weightForm').style.display = 'block';
+
+            } catch (error) {
+                document.getElementById('selectedAnimalInfo').style.display = 'none';
+                document.getElementById('weightForm').style.display = 'none';
+            }
+        }, 500));
+
+        // Weight Form
+        document.getElementById('weightForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                animal_id: parseInt(document.getElementById('weightAnimalId').value),
+                peso: parseFloat(document.getElementById('weightValue').value),
+                data_pesagem: document.getElementById('weightDate').value,
+                condicao_corporal: document.getElementById('weightCondition').value ? parseInt(document.getElementById('weightCondition').value) : null,
+                observacoes: document.getElementById('weightObs').value || null
+            };
+
+            try {
+                await apiRequest('/pesagens', 'POST', data);
+                showAlert('weightAlert', 'Pesagem registrada com sucesso!', 'success');
+
+                setTimeout(() => {
+                    resetWeightForm();
+                }, 2000);
+
+            } catch (error) {
+                showAlert('weightAlert', error.message, 'error');
+            }
+        });
+
+        // Reset Weight Form
+        function resetWeightForm() {
+            document.getElementById('searchWeightAnimal').value = '';
+            document.getElementById('selectedAnimalInfo').style.display = 'none';
+            document.getElementById('weightForm').style.display = 'none';
+            document.getElementById('weightForm').reset();
+            document.getElementById('weightDate').valueAsDate = new Date();
+            document.getElementById('weightAlert').classList.remove('active');
+        }
+
+        // ===== RAÇAS =====
+        async function loadRacas() {
+            try {
+                const data = await apiRequest('/racas');
+                const container = document.getElementById('racasList');
+
+                if (data.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999;">Nenhuma raça cadastrada</p>';
+                } else {
+                    container.innerHTML = `
+                        <ul class="item-list">
+                            ${data.map(r => `
+                                <li class="item">
+                                    <div class="item-info">
+                                        <div class="item-title">${r.nome}</div>
+                                        <div class="item-subtitle">${r.origem || 'Origem não informada'}</div>
+                                    </div>
+                                    <div class="item-actions">
+                                        <button class="btn btn-sm btn-primary" onclick="editRaca(${r.id})">✏️</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteRaca(${r.id}, '${r.nome}')">🗑️</button>
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar raças:', error);
+            }
+        }
+
+        function openRacaModal() {
+            document.getElementById('racaId').value = '';
+            document.getElementById('racaModalTitle').textContent = 'Nova Raça';
+            document.getElementById('racaForm').reset();
+            document.getElementById('racaModal').classList.add('active');
+        }
+
+        function closeRacaModal() {
+            document.getElementById('racaModal').classList.remove('active');
+        }
+
+        async function editRaca(id) {
+            try {
+                const data = await apiRequest(`/racas/${id}`);
+                document.getElementById('racaId').value = data.id;
+                document.getElementById('racaNome').value = data.nome;
+                document.getElementById('racaOrigem').value = data.origem || '';
+                document.getElementById('racaDescricao').value = data.descricao || '';
+                document.getElementById('racaModalTitle').textContent = 'Editar Raça';
+                document.getElementById('racaModal').classList.add('active');
+            } catch (error) {
+                alert('Erro ao carregar raça: ' + error.message);
+            }
+        }
+
+        async function deleteRaca(id, nome) {
+            if (confirm(`Deseja realmente excluir a raça "${nome}"?`)) {
+                try {
+                    await apiRequest(`/racas/${id}`, 'DELETE');
+                    await loadRacas();
+                } catch (error) {
+                    alert('Erro ao excluir raça: ' + error.message);
+                }
+            }
+        }
+
+        document.getElementById('racaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('racaId').value;
+            const data = {
+                nome: document.getElementById('racaNome').value,
+                origem: document.getElementById('racaOrigem').value || null,
+                descricao: document.getElementById('racaDescricao').value || null
+            };
+
+            try {
+                if (id) {
+                    await apiRequest(`/racas/${id}`, 'PUT', data);
+                } else {
+                    await apiRequest('/racas', 'POST', data);
+                }
+
+                showAlert('racaModalAlert', 'Raça salva com sucesso!', 'success');
+                await loadRacas();
+                await loadAnimalFormSelects();
+
+                setTimeout(() => {
+                    closeRacaModal();
+                }, 1500);
+
+            } catch (error) {
+                showAlert('racaModalAlert', error.message, 'error');
+            }
+        });
+
+        // ===== LOTES =====
+        async function loadLotes() {
+            try {
+                const data = await apiRequest('/lotes');
+                const container = document.getElementById('lotesList');
+
+                if (data.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999;">Nenhum lote cadastrado</p>';
+                } else {
+                    container.innerHTML = `
+                        <ul class="item-list">
+                            ${data.map(l => `
+                                <li class="item">
+                                    <div class="item-info">
+                                        <div class="item-title">${l.nome}</div>
+                                        <div class="item-subtitle">${l.descricao || 'Sem descrição'}</div>
+                                    </div>
+                                    <div class="item-actions">
+                                        <button class="btn btn-sm btn-primary" onclick="editLote(${l.id})">✏️</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteLote(${l.id}, '${l.nome}')">🗑️</button>
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar lotes:', error);
+            }
+        }
+
+        function openLoteModal() {
+            document.getElementById('loteId').value = '';
+            document.getElementById('loteModalTitle').textContent = 'Novo Lote';
+            document.getElementById('loteForm').reset();
+            document.getElementById('loteModal').classList.add('active');
+        }
+
+        function closeLoteModal() {
+            document.getElementById('loteModal').classList.remove('active');
+        }
+
+        async function editLote(id) {
+            try {
+                const data = await apiRequest(`/lotes/${id}`);
+                document.getElementById('loteId').value = data.id;
+                document.getElementById('loteNome').value = data.nome;
+                document.getElementById('loteDescricao').value = data.descricao || '';
+                document.getElementById('loteModalTitle').textContent = 'Editar Lote';
+                document.getElementById('loteModal').classList.add('active');
+            } catch (error) {
+                alert('Erro ao carregar lote: ' + error.message);
+            }
+        }
+
+        async function deleteLote(id, nome) {
+            if (confirm(`Deseja realmente excluir o lote "${nome}"?`)) {
+                try {
+                    await apiRequest(`/lotes/${id}`, 'DELETE');
+                    await loadLotes();
+                } catch (error) {
+                    alert('Erro ao excluir lote: ' + error.message);
+                }
+            }
+        }
+
+        document.getElementById('loteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('loteId').value;
+            const data = {
+                nome: document.getElementById('loteNome').value,
+                descricao: document.getElementById('loteDescricao').value || null
+            };
+
+            try {
+                if (id) {
+                    await apiRequest(`/lotes/${id}`, 'PUT', data);
+                } else {
+                    await apiRequest('/lotes', 'POST', data);
+                }
+
+                showAlert('loteModalAlert', 'Lote salvo com sucesso!', 'success');
+                await loadLotes();
+                await loadAnimalFormSelects();
+
+                setTimeout(() => {
+                    closeLoteModal();
+                }, 1500);
+
+            } catch (error) {
+                showAlert('loteModalAlert', error.message, 'error');
+            }
+        });
+
+        // ===== PASTOS =====
+        async function loadPastos() {
+            try {
+                const data = await apiRequest('/pastos');
+                const container = document.getElementById('pastosList');
+
+                if (data.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999;">Nenhum pasto cadastrado</p>';
+                } else {
+                    container.innerHTML = `
+                        <ul class="item-list">
+                            ${data.map(p => `
+                                <li class="item">
+                                    <div class="item-info">
+                                        <div class="item-title">${p.nome}</div>
+                                        <div class="item-subtitle">
+                                            ${p.area_hectares ? p.area_hectares + ' ha' : ''}
+                                            ${p.tipo_pasto ? ' - ' + p.tipo_pasto : ''}
+                                        </div>
+                                    </div>
+                                    <div class="item-actions">
+                                        <button class="btn btn-sm btn-primary" onclick="editPasto(${p.id})">✏️</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deletePasto(${p.id}, '${p.nome}')">🗑️</button>
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar pastos:', error);
+            }
+        }
+
+        function openPastoModal() {
+            document.getElementById('pastoId').value = '';
+            document.getElementById('pastoModalTitle').textContent = 'Novo Pasto';
+            document.getElementById('pastoForm').reset();
+            document.getElementById('pastoModal').classList.add('active');
+        }
+
+        function closePastoModal() {
+            document.getElementById('pastoModal').classList.remove('active');
+        }
+
+        async function editPasto(id) {
+            try {
+                const data = await apiRequest(`/pastos/${id}`);
+                document.getElementById('pastoId').value = data.id;
+                document.getElementById('pastoNome').value = data.nome;
+                document.getElementById('pastoArea').value = data.area_hectares || '';
+                document.getElementById('pastoTipo').value = data.tipo_pasto || '';
+                document.getElementById('pastoDescricao').value = data.descricao || '';
+                document.getElementById('pastoModalTitle').textContent = 'Editar Pasto';
+                document.getElementById('pastoModal').classList.add('active');
+            } catch (error) {
+                alert('Erro ao carregar pasto: ' + error.message);
+            }
+        }
+
+        async function deletePasto(id, nome) {
+            if (confirm(`Deseja realmente excluir o pasto "${nome}"?`)) {
+                try {
+                    await apiRequest(`/pastos/${id}`, 'DELETE');
+                    await loadPastos();
+                } catch (error) {
+                    alert('Erro ao excluir pasto: ' + error.message);
+                }
+            }
+        }
+
+        document.getElementById('pastoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('pastoId').value;
+            const data = {
+                nome: document.getElementById('pastoNome').value,
+                area_hectares: document.getElementById('pastoArea').value ? parseFloat(document.getElementById('pastoArea').value) : null,
+                tipo_pasto: document.getElementById('pastoTipo').value || null,
+                descricao: document.getElementById('pastoDescricao').value || null
+            };
+
+            try {
+                if (id) {
+                    await apiRequest(`/pastos/${id}`, 'PUT', data);
+                } else {
+                    await apiRequest('/pastos', 'POST', data);
+                }
+
+                showAlert('pastoModalAlert', 'Pasto salvo com sucesso!', 'success');
+                await loadPastos();
+                await loadAnimalFormSelects();
+
+                setTimeout(() => {
+                    closePastoModal();
+                }, 1500);
+
+            } catch (error) {
+                showAlert('pastoModalAlert', error.message, 'error');
+            }
+        });
+
+        // ===== TOUROS =====
+        async function loadTouros() {
+            try {
+                const data = await apiRequest('/touros');
+                const container = document.getElementById('tourosList');
+
+                // Also load in select for reproduction form
+                const touroSelect = document.getElementById('reprodTouro');
+                touroSelect.innerHTML = '<option value="">Selecione...</option>' +
+                    data.map(t => `<option value="${t.id}">${t.brinco} - ${t.nome}</option>`).join('');
+
+                // Also load in touro modal
+                const racas = await apiRequest('/racas');
+                document.getElementById('touroRaca').innerHTML = '<option value="">Selecione...</option>' +
+                    racas.map(r => `<option value="${r.id}">${r.nome}</option>`).join('');
+
+                if (data.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999;">Nenhum touro cadastrado</p>';
+                } else {
+                    container.innerHTML = `
+                        <ul class="item-list">
+                            ${data.map(t => `
+                                <li class="item">
+                                    <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
+                                        <img src="img/touro com font.png" style="width: 32px; height: 32px;">
+                                        <div class="item-info">
+                                            <div class="item-title">${t.brinco} - ${t.nome}</div>
+                                            <div class="item-subtitle">
+                                                ${t.raca_nome || 'S/R'} ${t.registro ? ' - Reg: ' + t.registro : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="item-actions">
+                                        <button class="btn btn-sm btn-primary" onclick="editTouro(${t.id})">✏️</button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteTouro(${t.id}, '${t.nome}')">🗑️</button>
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erro ao carregar touros:', error);
+            }
+        }
+
+        function openTouroModal() {
+            document.getElementById('touroId').value = '';
+            document.getElementById('touroModalTitle').textContent = 'Novo Touro IA';
+            document.getElementById('touroForm').reset();
+            document.getElementById('touroModal').classList.add('active');
+        }
+
+        function closeTouroModal() {
+            document.getElementById('touroModal').classList.remove('active');
+        }
+
+        async function editTouro(id) {
+            try {
+                const data = await apiRequest(`/touros/${id}`);
+                document.getElementById('touroId').value = data.id;
+                document.getElementById('touroBrinco').value = data.brinco;
+                document.getElementById('touroNome').value = data.nome;
+                document.getElementById('touroRaca').value = data.raca_id || '';
+                document.getElementById('touroRegistro').value = data.registro || '';
+                document.getElementById('touroLinhagem').value = data.linhagem || '';
+                document.getElementById('touroModalTitle').textContent = 'Editar Touro';
+                document.getElementById('touroModal').classList.add('active');
+            } catch (error) {
+                alert('Erro ao carregar touro: ' + error.message);
+            }
+        }
+
+        async function deleteTouro(id, nome) {
+            if (confirm(`Deseja realmente excluir o touro "${nome}"?`)) {
+                try {
+                    await apiRequest(`/touros/${id}`, 'DELETE');
+                    await loadTouros();
+                } catch (error) {
+                    alert('Erro ao excluir touro: ' + error.message);
+                }
+            }
+        }
+
+        document.getElementById('touroForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = document.getElementById('touroId').value;
+            const data = {
+                brinco: document.getElementById('touroBrinco').value,
+                nome: document.getElementById('touroNome').value,
+                raca_id: document.getElementById('touroRaca').value ? parseInt(document.getElementById('touroRaca').value) : null,
+                registro: document.getElementById('touroRegistro').value || null,
+                linhagem: document.getElementById('touroLinhagem').value || null
+            };
+
+            try {
+                if (id) {
+                    await apiRequest(`/touros/${id}`, 'PUT', data);
+                } else {
+                    await apiRequest('/touros', 'POST', data);
+                }
+
+                showAlert('touroModalAlert', 'Touro salvo com sucesso!', 'success');
+                await loadTouros();
+
+                setTimeout(() => {
+                    closeTouroModal();
+                }, 1500);
+
+            } catch (error) {
+                showAlert('touroModalAlert', error.message, 'error');
+            }
+        });
+
+        // ===== REPRODUÇÃO =====
+        async function loadReproduction() {
+            try {
+                // Load stats
+                const stats = await apiRequest('/relatorios/reproducao');
+                document.getElementById('statPrenhas').textContent = stats.total_prenhas || 0;
+                document.getElementById('statPartos').textContent = stats.partos_ano || 0;
+                document.getElementById('statDiagnostico').textContent = stats.aguardando_diagnostico || 0;
+                document.getElementById('statAbortos').textContent = stats.abortos_ano || 0;
+
+                // Load próximos eventos
+                const eventos = await apiRequest('/relatorios/proximos-eventos?dias=60');
+                const container = document.getElementById('proximosEventosReprod');
+
+                if (!eventos || eventos.length === 0) {
+                    container.innerHTML = '<p style="color: #999; text-align: center;">Nenhum evento programado</p>';
+                } else {
+                    container.innerHTML = eventos.map(e => {
+                        const icon = getEventIcon(e.tipo_evento);
+                        const badge = getEventBadge(e.tipo_evento);
+                        return `
+                            <div style="padding: 12px; margin: 8px 0; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--primary-color);">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <img src="${icon}" style="width: 32px; height: 32px;">
+                                    <div style="flex: 1;">
+                                        <div><strong>${e.brinco}</strong> - ${e.nome || 'S/N'}</div>
+                                        <div style="font-size: 0.9rem; color: #666;">
+                                            ${new Date(e.data_prevista).toLocaleDateString('pt-BR')} - ${badge}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (error) {
+                console.error('Erro ao carregar reprodução:', error);
+            }
+        }
+
+        // Show event type field changes
+        document.getElementById('reprodTipoEvento').addEventListener('change', (e) => {
+            const tipo = e.target.value;
+            const touroGroup = document.getElementById('touroGroup');
+            const natimortoGroup = document.getElementById('natimortoGroup');
+
+            // Show touro field for inseminacao
+            touroGroup.style.display = tipo === 'inseminacao' ? 'block' : 'none';
+
+            // Show natimorto field for parto
+            natimortoGroup.style.display = tipo === 'parto' ? 'block' : 'none';
+        });
+
+        // Search animal for reproduction
+        document.getElementById('reprodAnimalBrinco').addEventListener('input', debounce(async (e) => {
+            const brinco = e.target.value.trim();
+
+            if (brinco.length < 2) {
+                document.getElementById('reprodAnimalInfo').style.display = 'none';
+                return;
+            }
+
+            try {
+                const animal = await apiRequest(`/animais/brinco/${brinco}`);
+
+                document.getElementById('reprodAnimalName').textContent = animal.nome || animal.brinco;
+                document.getElementById('reprodAnimalDetails').textContent =
+                    `${animal.categoria_nome || 'N/A'} - ${animal.raca_nome || 'S/R'}`;
+                document.getElementById('reprodAnimalInfo').style.display = 'block';
+                document.getElementById('reprodAnimalInfo').dataset.animalId = animal.id;
+
+            } catch (error) {
+                document.getElementById('reprodAnimalInfo').style.display = 'none';
+            }
+        }, 500));
+
+        // Reproduction Form
+        document.getElementById('reproductionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const animalInfo = document.getElementById('reprodAnimalInfo');
+            const animalId = animalInfo.dataset.animalId;
+
+            if (!animalId) {
+                showAlert('reproductionAlert', 'Selecione um animal válido', 'error');
+                return;
+            }
+
+            const data = {
+                animal_id: parseInt(animalId),
+                tipo_evento: document.getElementById('reprodTipoEvento').value,
+                data_evento: document.getElementById('reprodDataEvento').value,
+                touro_id: document.getElementById('reprodTouro').value ? parseInt(document.getElementById('reprodTouro').value) : null,
+                natimorto: document.getElementById('reprodNatimorto').checked
+            };
+
+            try {
+                await apiRequest('/eventos-reprodutivos', 'POST', data);
+                showAlert('reproductionAlert', 'Evento registrado com sucesso!', 'success');
+                document.getElementById('reproductionForm').reset();
+                document.getElementById('reprodAnimalInfo').style.display = 'none';
+                document.getElementById('touroGroup').style.display = 'none';
+                document.getElementById('natimortoGroup').style.display = 'none';
+
+                setTimeout(() => {
+                    loadReproduction();
+                    switchTab('eventos');
+                }, 2000);
+
+            } catch (error) {
+                showAlert('reproductionAlert', error.message, 'error');
+            }
+        });
+
+        // Timeline search
+        document.getElementById('searchTimelineAnimal').addEventListener('input', debounce(async (e) => {
+            const brinco = e.target.value.trim();
+
+            if (brinco.length < 2) {
+                document.getElementById('timelineEvents').innerHTML = '<p style="color: #999; text-align: center;">Digite o brinco do animal</p>';
+                return;
+            }
+
+            try {
+                const animal = await apiRequest(`/animais/brinco/${brinco}`);
+                const eventos = await apiRequest(`/eventos-reprodutivos?animal_id=${animal.id}`);
+
+                const container = document.getElementById('timelineEvents');
+
+                if (eventos.length === 0) {
+                    container.innerHTML = '<p style="color: #999; text-align: center;">Nenhum evento registrado</p>';
+                } else {
+                    container.innerHTML = `
+                        <h4 style="margin-bottom: 15px;">${animal.brinco} - ${animal.nome || 'S/N'}</h4>
+                        <div class="timeline">
+                            ${eventos.map(e => {
+                                const icon = getEventIcon(e.tipo_evento);
+                                const badge = getEventBadge(e.tipo_evento);
+                                return `
+                                    <div class="timeline-item">
+                                        <div class="timeline-icon">
+                                            <img src="${icon}">
+                                        </div>
+                                        <div class="timeline-content">
+                                            <div class="timeline-date">${new Date(e.data_evento).toLocaleDateString('pt-BR')}</div>
+                                            <div class="timeline-title">${badge}</div>
+                                            ${e.touro_nome ? `<div class="timeline-text">Touro: ${e.touro_nome}</div>` : ''}
+                                            ${e.data_prevista ? `<div class="timeline-text">Previsão: ${new Date(e.data_prevista).toLocaleDateString('pt-BR')}</div>` : ''}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                document.getElementById('timelineEvents').innerHTML = '<p style="color: #999; text-align: center;">Animal não encontrado</p>';
+            }
+        }, 500));
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab contents
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+        }
+
+        // Show View
+        function showView(viewId) {
+            // Hide all views
+            document.querySelectorAll('#appScreen > .screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            // Show selected view
+            document.getElementById(viewId).classList.add('active');
+
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            if (event && event.target) {
+                event.target.closest('.nav-item')?.classList.add('active');
+            }
+
+            // Load data based on view
+            if (viewId === 'homeView') {
+                loadDashboard();
+            } else if (viewId === 'animalsView') {
+                loadAnimalsList();
+            } else if (viewId === 'addAnimalView') {
+                loadAnimalFormSelects();
+            } else if (viewId === 'racasView') {
+                loadRacas();
+            } else if (viewId === 'lotesView') {
+                loadLotes();
+            } else if (viewId === 'pastosView') {
+                loadPastos();
+            } else if (viewId === 'tourosView') {
+                loadTouros();
+            } else if (viewId === 'reproductionView') {
+                loadReproduction();
+                loadTouros(); // for select
+            }
+        }
+
+        // Helper: Get icon for category
+        function getCategoryIcon(categoria) {
+            const icons = {
+                'Bezerro': 'img/bezerro com font.png',
+                'Bezerra': 'img/bezerro com font.png',
+                'Garrote': 'img/garrote com font.png',
+                'Novilha': 'img/vaca ou novilha.png',
+                'Touro': 'img/touro com font.png',
+                'Vaca': 'img/vaca com font.png'
+            };
+            return icons[categoria] || 'img/brinco.png';
+        }
+
+        // Helper: Get icon for event
+        function getEventIcon(tipo) {
+            const icons = {
+                'inseminacao': 'img/cio.png',
+                'diagnostico_positivo': 'img/prenha.png',
+                'diagnostico_negativo': 'img/cio.png',
+                'parto': 'img/nascimento.png',
+                'aborto': 'img/aborto.png',
+                'cio': 'img/cio.png',
+                'diagnostico': 'img/prenha.png'
+            };
+            return icons[tipo] || 'img/brinco.png';
+        }
+
+        // Helper: Get badge text for event
+        function getEventBadge(tipo) {
+            const badges = {
+                'inseminacao': 'Inseminação',
+                'diagnostico_positivo': 'Prenha',
+                'diagnostico_negativo': 'Vazia',
+                'diagnostico': 'Diagnóstico',
+                'parto': 'Parto',
+                'aborto': 'Aborto',
+                'cio': 'Cio'
+            };
+            return badges[tipo] || tipo;
+        }
+
+        // API Request Helper
+        async function apiRequest(endpoint, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                }
+            };
+
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            const response = await fetch(`${API_URL}${endpoint}`, options);
+
+            if (!response.ok) {
+                let errorMsg = 'Erro na requisição';
+                try {
+                    const error = await response.json();
+                    errorMsg = error.detail || errorMsg;
+                } catch (e) {
+                    // If can't parse JSON, use status text
+                    errorMsg = response.statusText || errorMsg;
+                }
+                throw new Error(errorMsg);
+            }
+
+            return response.json();
+        }
+
+        // Show Alert
+        function showAlert(elementId, message, type) {
+            const alert = document.getElementById(elementId);
+            alert.textContent = message;
+            alert.className = `alert alert-${type} active`;
+
+            setTimeout(() => {
+                alert.classList.remove('active');
+            }, 5000);
+        }
+
+        // Debounce Helper
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            });
+        }
+    </script>
+</body>
+</html>
